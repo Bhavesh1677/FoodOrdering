@@ -4,20 +4,26 @@ import products from '@assets/data/products';
 import { defaultPizzaImage } from '@/components/ProductListItem';
 import Button from '@/components/Button';
 import { useState } from 'react';
+import { useCart } from '@/providers/CartProvider';
+import { PizzaSize } from '@/types';
 
 
-const sizes = ['S', 'M', 'L', 'XL']
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
 const ProductDetailsScreen = () => {
   const { id } = useLocalSearchParams();
 
-  const [selectedSize, setSelectedSize] = useState('M');
+  const { addItem } = useCart();
+
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
 
 
   const product = products.find((p) => p.id.toString() === id);
 
   const addToCart = () => {
-    console.warn('Adding to cart, size: ', selectedSize)
+    if (!product) return console.log('Product not found');
+    if (!selectedSize) return console.log('Size not selected');
+    addItem(product, selectedSize);
   }
 
   if (!product) {
@@ -27,7 +33,7 @@ const ProductDetailsScreen = () => {
   return (
     <View style={styles.container}>
 
-      <Stack.Screen options={{ title: product.name }}/>
+      <Stack.Screen options={{ title: product.name, animation: 'slide_from_right' }}/>
 
       <Image source={{ uri: product.image || defaultPizzaImage }} style={styles.image}/>
 
