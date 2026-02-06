@@ -20,7 +20,9 @@ const CreateProductScreen = () => {
   const resetFields = () => {
     setName('');
     setPrice('');
-  }
+    setImage(null);
+    setErrors('');
+  };
 
   const validateInput = () => {
     setErrors('');
