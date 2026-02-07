@@ -24,7 +24,7 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
         </View>
       </View>
       <View style={styles.quantitySelector}>
-        <Text style={styles.quantity}>{item.quantity}</Text>
+        <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
       </View>
     </View>
   );
@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
   },
   quantity: {
     fontWeight: '500',
-    fontSize: 18,
+    fontSize: 15,
+    paddingRight: 10,
   },
   price: {
     color: Colors.light.tint,
