@@ -1,22 +1,45 @@
-import { StyleSheet, Image, Text, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native'
-import React, { useState } from 'react'
-import Button from '@components/Button'
-import { defaultPizzaImage } from '@/components/ProductListItem';
+import Button from '@components/Button';
 import Colors from '@/constants/Colors';
-import * as ImagePicker from 'expo-image-picker'
-import { Stack, useLocalSearchParams } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useEffect, useState } from 'react';
+import { defaultPizzaImage } from '@/components/ProductListItem';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { useInsertProduct, useUpdateProduct, useProduct, useDeleteProduct } from '@/api/products';
+import { StyleSheet, Image, Text, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 
 const CreateProductScreen = () => {
-
+  // state variables for form fields 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [errors, setErrors] = useState('');
   const [image, setImage] = useState<string | null>(null);
 
-  const { id } = useLocalSearchParams();
+  // get id from route params 
+  const { id: idString } = useLocalSearchParams();
+  // convert id to number 
+  const id = parseFloat(typeof idString === 'string' ? idString : (idString?.[0]));
 
-  const isUpdating = !!id;
+  // check if updating product 
+  const isUpdating = !!idString;
 
+  // useMutation hooks for CRUD product operations 
+  const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  // useQuery hook to fetch product data for updating 
+  const { data: updatedProduct } = useProduct(id);
+
+  // useEffect to update fields when updatedProduct changes 
+  useEffect(() => {
+    if (updatedProduct) {
+      setName(updatedProduct.name);
+      setPrice(updatedProduct.price.toString());
+      setImage(updatedProduct.image);
+    }
+  }, [updatedProduct])
+
+  // reset fields function 
   const resetFields = () => {
     setName('');
     setPrice('');
@@ -24,6 +47,7 @@ const CreateProductScreen = () => {
     setErrors('');
   };
 
+  // validate input function 
   const validateInput = () => {
     setErrors('');
     if (!name && !price) {
@@ -45,6 +69,7 @@ const CreateProductScreen = () => {
     return true;
   }
 
+  // submit function 
   const onSubmit = () => {
     if (isUpdating) {
       onUpdate();
@@ -52,31 +77,55 @@ const CreateProductScreen = () => {
       onCreate();
     }
   }
-
+  // update product function 
   const onUpdate = () => {
     if (!validateInput()) {
       return;
     }
 
-    console.log('Updating Product: ', name);
-
-    // save in the database
-
-    resetFields();
+    updateProduct({
+      id,
+      name,
+      price: parseFloat(price),
+      image
+    }, {
+      onSuccess: () => {
+        resetFields();
+        router.back();
+      }
+    });
   }
 
+  // create product function 
   const onCreate = () => {
     if (!validateInput()) {
       return;
     }
 
-    console.log('Creating Product: ', name);
-
-    // save in the database
-
+    insertProduct({
+      name,
+      price: parseFloat(price),
+      image
+    }, {
+      onSuccess: () => {
+        resetFields();
+        router.back();
+      }
+    })
     resetFields();
+  };
+
+  // delete product function 
+  const onDelete = () => {
+    deleteProduct(id, {
+      onSuccess: () => {
+        resetFields();
+        router.replace('/(admin)');
+      }
+    })
   }
 
+  // pick image function 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -90,10 +139,7 @@ const CreateProductScreen = () => {
     }
   }
 
-  const onDelete = () => {
-    console.warn('DELETE!!!!!')
-  }
-
+  // confirm delete function 
   const confirmDelete = () => {
     Alert.alert('Confirm', 'Are you sure you want to delete this product', [
       {

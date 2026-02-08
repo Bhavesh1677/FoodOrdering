@@ -1,12 +1,23 @@
-import { View, FlatList, Platform } from 'react-native';
-import products from '@assets/data/products';
+import { FlatList, Platform, ActivityIndicator, Text } from 'react-native';
 import ProductListItem from '@components/ProductListItem';
 import { StatusBar } from 'expo-status-bar';
+import { useProductList } from '@/api/products';
 
 
 
 
 export default function MenuScreen() {
+
+  const { data: products, error, isLoading } = useProductList();
+  
+    if (isLoading) {
+      return <ActivityIndicator />;
+    }
+  
+    if (error) {
+      return <Text>Failed to fetch products</Text>;
+    }
+
   return (
     <>
       <FlatList 
