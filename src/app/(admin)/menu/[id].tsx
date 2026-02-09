@@ -20,6 +20,10 @@ const ProductDetailsScreen = () => {
     return <Text>Failed to fetch products</Text>;
   }
 
+  if (!product) {
+    return <Text>Product not found</Text>;
+  }
+
 
 
   return (
