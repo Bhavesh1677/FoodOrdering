@@ -13,7 +13,7 @@ export const useProductList = () => {
         },
         staleTime: 10000,
     })
-}
+};
 
 export const useProduct = (id: number) => {
     return useQuery({

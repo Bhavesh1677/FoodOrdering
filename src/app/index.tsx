@@ -1,15 +1,17 @@
-import { View, Text, ActivityIndicator } from 'react-native';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/providers/AuthProvider';
+import { Link, Redirect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import Button from '../components/Button';
-import { Link, Redirect } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useAuth } from '@/providers/AuthProvider';
-import { supabase } from '@/lib/supabase';
+import Button from '../components/Button';
 
 const index = () => {
 
   const { session, loading, isAdmin } = useAuth();
+
+  console.log('Index render', { session: session?.user?.id, loading, isAdmin });
 
   if (loading) {
     return (

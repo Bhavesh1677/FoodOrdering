@@ -1,3 +1,7 @@
+import AuthProvider from '@/providers/AuthProvider';
+import CartProvider from '@/providers/CartProvider';
+import QueryProvider from '@/providers/QueryProvider';
+import { useColorScheme } from '@components/useColorScheme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
@@ -5,10 +9,6 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { useColorScheme } from '@components/useColorScheme';
-import CartProvider from '@/providers/CartProvider';
-import AuthProvider from '@/providers/AuthProvider';
-import QueryProvider from '@/providers/QueryProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,6 +49,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  console.log('RootLayoutNav render');
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

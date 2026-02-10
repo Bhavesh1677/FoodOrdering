@@ -26,7 +26,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
         const existingItem = items.find(
             (item) => item.product_id === product.id && item.size === size
         );
-
+        
         if (existingItem) {
             updateQuantity(existingItem.id, 1);
             return;

@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
-import { createContext, useContext, PropsWithChildren, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import { Profile } from "../types";
 
 type AuthData = {
@@ -23,10 +23,13 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
 
+    console.log('AuthProvider render', { session: session?.user?.id, loading, isAdmin: profile?.group === 'ADMIN' });
+
     useEffect(() => {
         const fetchSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
+            console.log('AuthProvider: session set', session?.user?.id);
 
             if (session) {
                 // fetch profile
@@ -36,11 +39,13 @@ export default function AuthProvider({ children }: PropsWithChildren) {
                     .eq('id', session.user.id)
                     .single();
                 setProfile(data || null);
+                console.log('AuthProvider: profile set', data);
             }
             setLoading(false);
         };
         fetchSession();
         supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('AuthProvider: onAuthStateChange', _event, session?.user?.id);
             setSession(session);
         });
     }, []);

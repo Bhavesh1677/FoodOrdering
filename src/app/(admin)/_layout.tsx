@@ -1,9 +1,9 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs, Redirect } from 'expo-router';
-import { useAuth } from '@/providers/AuthProvider';
 import Colors from '@/constants/Colors';
+import { useAuth } from '@/providers/AuthProvider';
 import { useColorScheme } from '@components/useColorScheme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Redirect, Tabs } from 'expo-router';
+import React from 'react';
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -15,6 +15,7 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { isAdmin } = useAuth();
+  console.log('AdminLayout render', { isAdmin });
 
   if (!isAdmin) {
     return <Redirect href={'/'} />;
@@ -32,7 +33,7 @@ export default function TabLayout() {
         },
       }}>
 
-      <Tabs.Screen name='index' options={{ href: null }}/>
+      <Tabs.Screen name='index' options={{ href: null }} />
       <Tabs.Screen
         name="menu"
         options={{
